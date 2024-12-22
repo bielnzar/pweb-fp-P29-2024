@@ -32,11 +32,13 @@ Ketentuan lengkap bisa dilihat pada [link](https://docs.google.com/document/d/1j
 1. Clone this repository 
 ```
 https://github.com/bielnzar/pweb-fp-P29-2024.git
+```
 
 2. `backend` : Express JS
 ```
 cd backend
 ```
+
 Install Dependency
 ```
 npm install
@@ -52,6 +54,7 @@ MONGODB_URI=mongodb+srv://[username]:[pw]@[cluster-name]/[db-name]?retryWrites=t
 JWT_SECRET=(....)
 PORT=5000
 ```
+
 Lalu, jalankan server menggunakan command berikut :
 ```
 npm run start:dev
