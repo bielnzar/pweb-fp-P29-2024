@@ -62,12 +62,15 @@ npm run start:dev
 
 3. `frontend` : Vue JS + Tailwind CSS
 
+```
+cd frontend
+```
+
 Install Dependency
 ```
 npm install
 ```
 
 ```
-cd frontend
 npm run dev
 ```
