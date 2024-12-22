@@ -32,17 +32,16 @@ Ketentuan lengkap bisa dilihat pada [link](https://docs.google.com/document/d/1j
 1. Clone this repository 
 ```
 https://github.com/bielnzar/pweb-fp-P29-2024.git
-```
 
-2. Install Dependency
+2. `backend` : Express JS
+```
+cd backend
+```
+Install Dependency
 ```
 npm install
 ```
 
-3. `backend` : Express JS
-```
-cd backend
-```
 Setup Environment Variabel
 
 buat file `.env` pada root folder 
@@ -58,10 +57,14 @@ Lalu, jalankan server menggunakan command berikut :
 npm run start:dev
 ```
 
-4. `frontend` : Vue JS + Tailwind CSS
+3. `frontend` : Vue JS + Tailwind CSS
+
+Install Dependency
+```
+npm install
+```
+
 ```
 cd frontend
 npm run dev
 ```
-
-5. Kritik saran dan pertanyaan, silahkan hubungi admin. Terimakasih.
