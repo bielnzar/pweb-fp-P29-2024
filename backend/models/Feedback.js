@@ -3,7 +3,7 @@ const moment = require('moment-timezone');
 
 const FeedbackSchema = new mongoose.Schema({
     name: { type: String, required: false },
-    isAnonymous: { type: Boolean, default: false },
+    is_anonymous: { type: Boolean, default: false },
     email: { type: String, required: false },
     message: { type: String, required: true },
     createdAt: {

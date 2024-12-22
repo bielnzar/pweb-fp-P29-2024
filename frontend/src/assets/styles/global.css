@@ -1,0 +1,43 @@
+html {
+    scroll-behavior: smooth;
+}
+
+:root {
+    /* Primary Colors */
+    --primary-color: #34d399;
+    /* Green */
+    --primary-gradient: linear-gradient(to right, #34d399, #14b8a6, #3b82f6);
+    /* Green to Blue */
+    --secondary-color: #14b8a6;
+    /* Teal */
+    --background-light: #f9fafb;
+    /* Light Gray */
+    --background-dark: #1f2937;
+    /* Dark Gray */
+    --text-light: #ffffff;
+    /* White */
+    --text-dark: #374151;
+    /* Dark Text */
+}
+
+body {
+    background-color: var(--background-light);
+    color: var(--text-dark);
+    font-family: 'Inter', sans-serif;
+}
+
+.bg-primary {
+    background-color: var(--primary-color);
+}
+
+.bg-primary-gradient {
+    background: var(--primary-gradient);
+}
+
+.text-primary {
+    color: var(--primary-color);
+}
+
+.text-secondary {
+    color: var(--secondary-color);
+}

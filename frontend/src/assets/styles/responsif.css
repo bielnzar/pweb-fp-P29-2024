@@ -1,0 +1,28 @@
+@media (min-width: 768px) {
+    ul {
+        display: flex !important;
+    }
+    .container-footer {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .footer-links a {
+        display: inline-block;
+    }
+
+    footer a {
+        justify-content: center;
+    }
+}
+
+@media (min-width: 425px) {
+    .container-footer {
+        padding: 0 16px;
+    }
+
+    .footer-links a {
+        font-size: 14px;
+    }
+}

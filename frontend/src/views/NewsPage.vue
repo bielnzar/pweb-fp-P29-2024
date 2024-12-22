@@ -1,8 +1,8 @@
 <template>
-    <div class="news-container bg-gray-100 min-h-screen flex flex-col">
+    <div class="news-container bg-gray-200 min-h-screen flex flex-col">
         <Navbar />
         <main class="flex-grow">
-            <div class="news-header bg-blue-600 text-white text-center py-10">
+            <div class="news-header bg-gradient-to-b from-blue-500 to-teal-500 text-text-light text-center py-10 mt-14">
                 <h1 class="text-4xl font-bold">Latest News</h1>
             </div>
 
@@ -25,14 +25,21 @@
 import Navbar from '../components/Navbar.vue';
 import Footer from '../components/Footer.vue';
 
+import news1 from '../assets/images/news-1.png';
+import news2 from '../assets/images/news-2.png';
+import news3 from '../assets/images/news-3.png';
+import news4 from '../assets/images/news-4.png';
+
 export default {
     components: { Navbar, Footer },
+
     data() {
         return {
             newsList: [
-                { id: 1, title: 'Crowdfunding Success!', content: 'Learn how we helped raise funds for communities in need.', image: 'https://via.placeholder.com/300' },
-                { id: 2, title: 'New Projects Launched', content: 'Discover the latest campaigns to support.', image: 'https://via.placeholder.com/300' },
-                { id: 3, title: 'Our Impact', content: 'See how we’re making a difference.', image: 'https://via.placeholder.com/300' },
+                { id: 1, title: 'Bank Syariah?', content: 'Berita seputar Bank syariah yang ternyata di luar nalar dan mengandung banyak riba.', image: news1 },
+                { id: 2, title: 'Hacker sebaiknya jangan menyerang!', content: 'Aksi heroik Lord KOMINFO yang bisa mengusir para hacker dengan ilmu keramatnya.', image: news2 },
+                { id: 3, title: 'BSI Sombong?!', content: 'Bank Syariah yang menguasai bumi ini mendadak dibobol, setelah mengeluarkan statement keamanan bank paling aman.', image: news3 },
+                { id: 4, title: 'Sukses Dunia Akhirat', content: 'Bersama sugeng tumbler, influencer dakwah muda yang sudah berkarir di kancah internasional.', image: news4 },
             ],
         };
     },
