@@ -24,8 +24,8 @@ Ketentuan lengkap bisa dilihat pada [link](https://docs.google.com/document/d/1j
 
 ## Pembagian Pengerjaan :
 - Nabiel Nizar Anwari : bagian 1 (Home) 
-- Gandhi Ert Julio : bagian 
-- Chelsea Vania Hariyono : bagian 
+- Gandhi Ert Julio : bagian 2 (Dashboard User)
+- Chelsea Vania Hariyono : bagian 3 (Dashboard Admin)
 
 ## How to Use
 
