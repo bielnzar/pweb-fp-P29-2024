@@ -73,10 +73,24 @@ export default {
           email: this.email,
           password: this.password,
         });
-        localStorage.setItem("token", response.data.token);
-        alert("Login successful!");
+        
+        // Store the token
+        const token = response.data.token;
+        localStorage.setItem("token", token);
+
+        // Redirect based on email type
+        if (this.email.includes("@admin.com")) {
+          this.$router.push("/admin");
+        } else {
+          this.$router.push("/user");
+        }
       } catch (error) {
-        alert("Invalid email or password!");
+        // Perbaikan pesan error lebih informatif
+        if (error.response && error.response.data.message) {
+          alert(error.response.data.message);
+        } else {
+          alert("Something went wrong!");
+        }
       }
     },
   },
@@ -85,12 +99,11 @@ export default {
 
 <style scoped>
 main {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: calc(100vh - 64px);
-    /* Mengatur tinggi minimum untuk menghindari pemotongan */
-    padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 64px);
+  padding: 20px;
 }
 </style>
