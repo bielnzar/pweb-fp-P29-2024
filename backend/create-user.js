@@ -8,29 +8,37 @@ const connectDB = async () => {
         console.log('MongoDB connected');
     } catch (err) {
         console.error('Error connecting to MongoDB:', err.message);
-        process.exit(1);
+        process.exit(1); // Hentikan proses jika koneksi gagal
     }
 };
 
 const createUser = async (name, email, password) => {
     try {
+        // Cek apakah email sudah ada
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            console.log(`User with email ${email} already exists. Skipping creation.`);
+            return;
+        }
+
+        // Buat pengguna baru
         const user = new User({ name, email, password }); // Simpan password langsung
         await user.save();
         console.log(`User : ${name} created successfully`);
-    } 
-    catch (err) {
+    } catch (err) {
         console.error('Error creating user:', err.message);
-    } 
+    }
 };
 
 (async () => {
     await connectDB();
 
-    // Sesuaikan dengan user yang ingin dibuat
-    await createUser('User Admin', 'nabiel@admin.com', 'adminganteng');
-    await createUser('User Biasa', 'nabiel@user.com', 'userbiasa');
-
-    mongoose.connection.close(() => {
+    try {
+        await createUser('User Admin', 'cele@admin.com', 'qwerty');
+    } catch (err) {
+        console.error('Error during user creation process:', err.message);
+    } finally {
+        await mongoose.disconnect(); // Tutup koneksi MongoDB
         console.log('MongoDB connection closed');
-    });
+    }
 })();

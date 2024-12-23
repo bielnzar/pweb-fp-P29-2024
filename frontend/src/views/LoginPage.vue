@@ -13,7 +13,9 @@
               type="email"
               placeholder="Your email"
               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
+              :class="{ 'border-red-500': emailError }"
             />
+            <p v-if="emailError" class="text-red-500 text-xs mt-1">{{ emailError }}</p>
           </div>
 
           <div>
@@ -25,6 +27,7 @@
                 id="password"
                 placeholder="Your password"
                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"
+                :class="{ 'border-red-500': passwordError }"
               />
               <button
                 type="button"
@@ -34,14 +37,18 @@
                 <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
               </button>
             </div>
+            <p v-if="passwordError" class="text-red-500 text-xs mt-1">{{ passwordError }}</p>
           </div>
 
           <button
             type="submit"
             class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300"
+            :disabled="isLoading"
           >
-            Login
+            <span v-if="isLoading" class="loader mr-2"></span>
+            <span v-else>Login</span>
           </button>
+          <p v-if="errorMessage" class="text-red-500 text-center mt-4">{{ errorMessage }}</p>
         </form>
       </div>
     </main>
@@ -61,36 +68,52 @@ export default {
       email: "",
       password: "",
       showPassword: false,
+      isLoading: false,
+      errorMessage: "",
+      emailError: "",
+      passwordError: "",
     };
   },
   methods: {
     togglePassword() {
       this.showPassword = !this.showPassword;
     },
+    validateForm() {
+      this.emailError = "";
+      this.passwordError = "";
+
+      if (!this.email) this.emailError = "Email is required.";
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email)) this.emailError = "Invalid email format.";
+
+      if (!this.password) this.passwordError = "Password is required.";
+
+      return !this.emailError && !this.passwordError;
+    },
     async submitLogin() {
+      if (!this.validateForm()) return;
+
+      this.isLoading = true;
+      this.errorMessage = "";
       try {
         const response = await axios.post("http://localhost:5000/login", {
           email: this.email,
           password: this.password,
         });
-        localStorage.setItem("token", response.data.token);
-        alert("Login successful!");
+
+        // Simpan data ke localStorage
+        localStorage.setItem("user", JSON.stringify({
+          email: this.email,
+          role: response.data.role,
+        }));
+
+        // Arahkan ke rute yang sesuai
+        this.$router.push(response.data.redirectTo);
       } catch (error) {
-        alert("Invalid email or password!");
+        this.errorMessage = error.response?.data?.message || "Invalid email or password!";
+      } finally {
+        this.isLoading = false;
       }
     },
   },
 };
 </script>
-
-<style scoped>
-main {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: calc(100vh - 64px);
-    /* Mengatur tinggi minimum untuk menghindari pemotongan */
-    padding: 20px;
-}
-</style>

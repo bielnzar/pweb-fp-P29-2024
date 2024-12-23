@@ -1,33 +1,31 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
+// Login controller
 exports.login = async (req, res) => {
-    try {
-        const { email, password } = req.body;
+    const { email, password } = req.body;
 
+    try {
+        // Cari user berdasarkan email
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(401).json({ message: 'User not found' });
         }
 
+        // Bandingkan password langsung
         if (password !== user.password) {
-            return res.status(401).json({ message: 'Invalid credentials' });
+            return res.status(401).json({ message: 'Invalid password' });
         }
 
         // Buat token JWT
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign(
+            { id: user._id, role: user.email.includes('@admin.com') ? 'ADMIN' : 'USER' },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
 
-        // Redirect berdasarkan email domain
-        if (email.includes('@admin.com')) {
-            res.status(200).json({ message: 'Redirect to Admin Dashboard', dashboard: 'admin', token });
-        } else if (email.includes('@user.com')) {
-            res.status(200).json({ message: 'Redirect to User Dashboard', dashboard: 'user', token });
-        } else {
-            res.status(403).json({ message: 'Access forbidden: Invalid email domain' });
-        }
-    } 
-    catch (err) {
-        console.error('Error during login:', err.message);
-        res.status(500).json({ error: 'Server error' });
+        res.json({ message: 'Login successful', token });
+    } catch (error) {
+        res.status(500).json({ message: 'Error logging in', error: error.message });
     }
 };
