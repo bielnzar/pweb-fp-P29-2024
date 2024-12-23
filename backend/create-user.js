@@ -34,7 +34,7 @@ const createUser = async (name, email, password) => {
     await connectDB();
 
     try {
-        await createUser('User Admin', 'cele@admin.com', 'qwerty');
+        await createUser('User Biasa', 'cele@gmail.com', 'ya');
     } catch (err) {
         console.error('Error during user creation process:', err.message);
     } finally {
