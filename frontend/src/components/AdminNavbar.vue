@@ -1,5 +1,5 @@
 <template>
-    <nav class="navbar shadow-lg fixed top-0 left-0 right-0" style="background-color: #14b8a6;">
+    <nav class="navbar shadow-lg fixed top-0 left-0 right-0" style="background: var(--primary-gradient);">
       <div class="container mx-auto px-4 flex justify-between items-center py-3">
         <!-- Logo Section -->
         <div class="text-white font-bold leading-tight">
@@ -79,7 +79,7 @@
     height: 100%;
   }
   .font-semibold {
-    font-weight: 600; /* Memberikan ketebalan */
+    font-weight: 600; 
   }
   </style>
   
