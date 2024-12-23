@@ -57,20 +57,40 @@
           </tbody>
         </table>
         <div class="flex justify-between items-center mt-4">
-          <div>
+          <div class="space-x-2">
             <button 
               @click="prevPage" 
-              class="bg-gray-200 text-gray-700 py-1 px-4 rounded-md hover:bg-gray-300 transition duration-300"
+              class="bg-gray-200 text-gray-700 py-1 px-4 rounded-md hover:bg-gray-300 transition duration-300 disabled:bg-gray-100 disabled:text-gray-400"
               :disabled="currentPage === 1"
             >
               Previous
             </button>
             <button 
               @click="nextPage" 
-              class="bg-gray-200 text-gray-700 py-1 px-4 rounded-md hover:bg-gray-300 transition duration-300"
+              class="bg-blue-200 text-blue-700 py-1 px-4 rounded-md hover:bg-blue-300 transition duration-300 disabled:bg-blue-100 disabled:text-blue-400"
               :disabled="currentPage === totalPages"
             >
               Next
+            </button>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-gray-600 text-sm">
+              Page {{ currentPage }} of {{ totalPages }}
+            </span>
+            <input 
+              v-model.number="pageInput"
+              @keyup.enter="goToPage"
+              type="number" 
+              min="1" 
+              :max="totalPages" 
+              class="w-16 border border-gray-300 rounded-md px-2 py-1 text-center text-sm"
+              placeholder="Page"
+            />
+            <button 
+              @click="goToPage"
+              class="bg-blue-600 text-white py-1 px-4 rounded-md text-sm hover:bg-blue-700 transition duration-300"
+            >
+              Go
             </button>
           </div>
           <button 
@@ -95,7 +115,7 @@
 </template>
 
 <script>
-import Navbar from "/src/components/Navbar.vue";
+import Navbar from "/src/components/AdminNavbar.vue";
 import Footer from "/src/components/Footer.vue";
 import axios from "axios";
 
@@ -107,6 +127,7 @@ export default {
       currentPage: 1,
       rowsPerPage: 10,
       isShowingAll: false,
+      pageInput: 1,
     };
   },
   computed: {
@@ -139,17 +160,27 @@ export default {
     prevPage() {
       if (!this.isShowingAll && this.currentPage > 1) {
         this.currentPage -= 1;
+        this.pageInput = this.currentPage;
       }
     },
     nextPage() {
       if (!this.isShowingAll && this.currentPage < this.totalPages) {
         this.currentPage += 1;
+        this.pageInput = this.currentPage;
       }
     },
     showAll() {
       this.isShowingAll = !this.isShowingAll;
       if (!this.isShowingAll) {
         this.currentPage = 1;
+        this.pageInput = 1;
+      }
+    },
+    goToPage() {
+      if (this.pageInput >= 1 && this.pageInput <= this.totalPages) {
+        this.currentPage = this.pageInput;
+      } else {
+        alert("Please enter a valid page number.");
       }
     },
   },

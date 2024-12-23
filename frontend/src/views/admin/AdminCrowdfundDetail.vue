@@ -1,106 +1,87 @@
 <template>
-    <div>
-      <h1>Crowdfund Detail</h1>
-      <div>
-        <h3>{{ crowdfund.name }}</h3>
+  <div class="admin-crowdfund-detail bg-gray-100 min-h-screen flex flex-col">
+    <Navbar />
+    <main class="flex-grow container mx-auto py-8">
+      <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Crowdfund Detail</h1>
+      <div class="bg-white shadow-lg rounded-lg p-6">
+        <h3 class="text-xl font-semibold">{{ crowdfund.name }}</h3>
         <p>Target: {{ crowdfund.target }}</p>
-        <p>Current Donation: {{ crowdfund.current_donation }}</p>
+        <p>Current Donation: {{ crowdfund.currentDonation }}</p>
         <p>Status: {{ crowdfund.status }}</p>
-      </div>
-      <div>
-        <h3>Comments</h3>
+
+        <h3 class="text-lg font-bold mt-6">Comments</h3>
         <ul>
-          <li v-for="comment in comments" :key="comment._id">
+          <li
+            v-for="comment in comments"
+            :key="comment._id"
+            class="bg-gray-100 p-4 rounded-lg my-2 flex justify-between items-center"
+          >
             <p>{{ comment.message }}</p>
-            <button @click="deleteComment(comment._id)">Delete</button>
+            <button
+              @click="deleteComment(comment._id)"
+              class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
+            >
+              Delete
+            </button>
           </li>
         </ul>
+
+        <div class="mt-6">
+          <router-link
+            :to="`/admin/${crowdfund._id}/edit`"
+            class="bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600"
+          >
+            Edit Crowdfund
+          </router-link>
+          <button
+            @click="deleteCrowdfund"
+            class="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 ml-2"
+          >
+            Delete Crowdfund
+          </button>
+        </div>
       </div>
-      <router-link :to="`/admin/${crowdfund._id}/edit`">Edit Crowdfund</router-link>
-      <button @click="deleteCrowdfund">Delete Crowdfund</button>
-    </div>
-  </template>
-  
-  <script>
-  import axios from 'axios';
-  
-  export default {
-    data() {
-      return {
-        crowdfund: {},
-        comments: [],
-      };
+    </main>
+    <Footer />
+  </div>
+</template>
+
+<script>
+import Navbar from "/src/components/AdminNavbar.vue";
+import Footer from "/src/components/Footer.vue";
+import axios from "axios";
+
+export default {
+  components: { Navbar, Footer },
+  data() {
+    return {
+      crowdfund: {},
+      comments: [],
+    };
+  },
+  methods: {
+    async fetchCrowdfund() {
+      const response = await axios.get(`/api/admin/${this.$route.params.crowdfund_id}`);
+      this.crowdfund = response.data;
+      this.comments = response.data.comments;
     },
-    methods: {
-      async fetchCrowdfund() {
-        const response = await axios.get(`/api/admin/${this.$route.params.crowdfund_id}`);
-        this.crowdfund = response.data.crowdfund;
-        this.comments = response.data.comments;
-      },
-      async deleteComment(id) {
-        await axios.delete(`/api/comments/${id}`);
-        this.fetchCrowdfund();
-      },
-      async deleteCrowdfund() {
-        await axios.delete(`/api/admin/${this.$route.params.crowdfund_id}`);
-        this.$router.push('/admin');
-      },
-    },
-    created() {
+    async deleteComment(id) {
+      await axios.delete(`/api/comments/${id}`);
       this.fetchCrowdfund();
     },
-  };
-  </script>
-  
-  <style scoped>
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
-}
+    async deleteCrowdfund() {
+      await axios.delete(`/api/admin/${this.$route.params.crowdfund_id}`);
+      this.$router.push("/admin");
+    },
+  },
+  created() {
+    this.fetchCrowdfund();
+  },
+};
+</script>
 
-div {
-  margin-bottom: 20px;
-}
-
-h3 {
-  color: #333;
-  margin-bottom: 10px;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  background-color: #f9f9f9;
-  margin-bottom: 10px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-
-button {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-button:hover {
-  background-color: #d32f2f;
-}
-
-.router-link {
-  text-decoration: none;
-  color: #2196f3;
-  margin-top: 10px;
-  display: inline-block;
-}
-
-.router-link:hover {
-  text-decoration: underline;
+<style scoped>
+.container {
+  max-width: 800px;
 }
 </style>
