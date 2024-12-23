@@ -1,31 +1,33 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const jwt = require('jsonwebtoken');
 
-const login = async (req, res) => {
+exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log(`Login attempt: ${email}`); // Tambahkan log email yang digunakan
 
         const user = await User.findOne({ email });
         if (!user) {
-            console.log('User not found'); // Log jika user tidak ditemukan
-            return res.status(401).json({ message: 'Invalid email or password!' });
+            return res.status(404).json({ message: 'User not found' });
         }
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            console.log('Invalid password'); // Log jika password salah
-            return res.status(401).json({ message: 'Invalid email or password!' });
+        if (password !== user.password) {
+            return res.status(401).json({ message: 'Invalid credentials' });
         }
 
-        // Buat token
-        const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.status(200).json({ token });
-    } catch (error) {
-        console.error('Error during login:', error.message); // Tambahkan log untuk error lainnya
-        res.status(500).json({ message: 'Internal Server Error' });
+        // Buat token JWT
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        // Redirect berdasarkan email domain
+        if (email.includes('@admin.com')) {
+            res.status(200).json({ message: 'Redirect to Admin Dashboard', dashboard: 'admin', token });
+        } else if (email.includes('@user.com')) {
+            res.status(200).json({ message: 'Redirect to User Dashboard', dashboard: 'user', token });
+        } else {
+            res.status(403).json({ message: 'Access forbidden: Invalid email domain' });
+        }
+    } 
+    catch (err) {
+        console.error('Error during login:', err.message);
+        res.status(500).json({ error: 'Server error' });
     }
 };
-
-module.exports = { login };
