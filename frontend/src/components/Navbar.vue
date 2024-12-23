@@ -1,5 +1,5 @@
 <template>
-    <nav class="navbar bg-blue-600 shadow-lg rounded-lg fixed top-0 left-0 right-0 mx-auto mt-4">
+    <nav class="navbar bg-blue-600 shadow-lg fixed top-0 left-0 right-0 mx-auto mt-4">
         <div class="container container-navbar mx-auto px-4 flex justify-between items-center py-4">
 
             <div class="text-white font-bold text-2xl">
