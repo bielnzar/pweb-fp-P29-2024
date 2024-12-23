@@ -10,9 +10,9 @@ const router = express.Router();
 router.get('/', getAllCrowdfunds);
 
 // Rute untuk mendapatkan detail crowdfund
-router.get('/:crowdfund_id', getCrowdfundDetails);
+router.get('/:id', getCrowdfundDetails);
 
 // Rute untuk mendonasikan ke crowdfund
-router.post('/:crowdfund_id/donate', donateToCrowdfund);
+router.post('/:id/donate', donateToCrowdfund);
 
 module.exports = router;

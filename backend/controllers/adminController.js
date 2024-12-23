@@ -1,5 +1,9 @@
+const mongoose = require('mongoose');
 const Crowdfund = require('../models/Crowdfund');
 const Comment = require('../models/Comment');
+
+// Helper function to validate ObjectId
+const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 // 1. Get all crowdfunds
 exports.getAllCrowdfunds = async (req, res) => {
@@ -13,28 +17,35 @@ exports.getAllCrowdfunds = async (req, res) => {
 
 // 2. Get crowdfund details
 exports.getCrowdfundDetails = async (req, res) => {
-  const { crowdfund_id } = req.params;
+  const { id } = req.params;
+
+  // Validate the ID format
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'Invalid Crowdfund ID format' });
+  }
+
   try {
-    const crowdfund = await Crowdfund.findById(crowdfund_id).populate('comments');
-    if (!crowdfund) return res.status(404).json({ message: 'Crowdfund not found' });
+    // Attempt to fetch the crowdfund and populate comments
+    const crowdfund = await Crowdfund.findById(id).populate('comments');
+    console.log('Crowdfund fetched:', crowdfund); // Debug log
+
+    if (!crowdfund) {
+      return res.status(404).json({ message: 'Crowdfund not found' });
+    }
+
     res.status(200).json(crowdfund);
   } catch (err) {
+    console.error('Error fetching crowdfund details:', err); // Debug log
     res.status(500).json({ message: 'Error fetching crowdfund details', error: err.message });
   }
 };
 
+
 // 3. Create crowdfund
 exports.createCrowdfund = async (req, res) => {
-  const { name, target } = req.body;
-  const adminName = req.user.name; // Assume admin's name is stored in req.user
+  const { name, target, createdBy } = req.body;
   try {
-    const newCrowdfund = new Crowdfund({
-      name,
-      target,
-      currentDonation: 0,
-      status: 'OPEN',
-      createdBy: adminName,
-    });
+    const newCrowdfund = new Crowdfund({ name, target, createdBy });
     await newCrowdfund.save();
     res.status(201).json(newCrowdfund);
   } catch (err) {
@@ -44,11 +55,16 @@ exports.createCrowdfund = async (req, res) => {
 
 // 4. Edit crowdfund
 exports.editCrowdfund = async (req, res) => {
-  const { crowdfund_id } = req.params;
+  const { id } = req.params;
   const { name, target, status } = req.body;
+
+  if (!isValidObjectId(id)) {
+    return res.status(400).json({ message: 'Invalid ID format' });
+  }
+
   try {
     const updatedCrowdfund = await Crowdfund.findByIdAndUpdate(
-      crowdfund_id,
+      id,
       { name, target, status },
       { new: true }
     );
@@ -61,9 +77,14 @@ exports.editCrowdfund = async (req, res) => {
 
 // 5. Delete crowdfund
 exports.deleteCrowdfund = async (req, res) => {
-  const { crowdfund_id } = req.params;
+  const { id } = req.params;
+
+  if (!isValidObjectId(id)) {
+    return res.status(400).json({ message: 'Invalid ID format' });
+  }
+
   try {
-    const deletedCrowdfund = await Crowdfund.findByIdAndDelete(crowdfund_id);
+    const deletedCrowdfund = await Crowdfund.findByIdAndDelete(id);
     if (!deletedCrowdfund) return res.status(404).json({ message: 'Crowdfund not found' });
     res.status(200).json({ message: 'Crowdfund deleted successfully' });
   } catch (err) {
@@ -73,9 +94,14 @@ exports.deleteCrowdfund = async (req, res) => {
 
 // 6. Delete comment
 exports.deleteComment = async (req, res) => {
-  const { comment_id } = req.params;
+  const { id } = req.params;
+
+  if (!isValidObjectId(id)) {
+    return res.status(400).json({ message: 'Invalid ID format' });
+  }
+
   try {
-    const deletedComment = await Comment.findByIdAndDelete(comment_id);
+    const deletedComment = await Comment.findByIdAndDelete(id);
     if (!deletedComment) return res.status(404).json({ message: 'Comment not found' });
     res.status(200).json({ message: 'Comment deleted successfully' });
   } catch (err) {

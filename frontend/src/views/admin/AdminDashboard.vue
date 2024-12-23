@@ -146,14 +146,15 @@ export default {
   methods: {
     async fetchCrowdfunds() {
       try {
-        const response = await axios.get("/api/admin");
+        const response = await axios.get("http://localhost:5000/api/admin");
+        console.log(response.data);
         this.crowdfunds = response.data;
       } catch (error) {
         console.error("Failed to fetch crowdfunds:", error);
       }
     },
     deleteCrowdfund(id) {
-      axios.delete(`/api/admin/${id}`).then(() => {
+      axios.delete(`http://localhost:5000/api/admin/${id}`).then(() => {
         this.fetchCrowdfunds();
       });
     },

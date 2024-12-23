@@ -8,7 +8,7 @@ exports.isAdmin = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (decoded.role !== 'ADMIN') {
+    if (decoded.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
     }
     req.user = decoded; // Simpan data pengguna di req

@@ -2,7 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const connectDB = require('./config/db');
-const User = require('./models/User'); // Import model User
+const User = require('./models/User');
+const jwt = require('jsonwebtoken'); // Import the jwt library
+const adminRouter = require('./routes/admin');
 require('dotenv').config();
 
 // Inisialisasi Express
@@ -14,6 +16,8 @@ connectDB();
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+
+app.use('/api', adminRouter);
 
 // Rute Login
 app.post('/login', async (req, res) => {
@@ -31,6 +35,14 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid password' });
     }
 
+    // Create JWT token with user data (e.g., user ID)
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET, // Secret key (store this securely in your .env)
+      { expiresIn: '1h' } // Token expiration (optional)
+    );
+
+    // Determine the role
     const role = email.includes('@admin.com') ? 'admin' : 'user';
     const redirectTo = role === 'admin' ? '/admin' : '/';
 
@@ -38,6 +50,7 @@ app.post('/login', async (req, res) => {
       message: 'Login successful',
       role,
       redirectTo,
+      token, // Send the token in the response
     });
   } catch (err) {
     return res.status(500).json({ message: 'Internal server error', error: err.message });
