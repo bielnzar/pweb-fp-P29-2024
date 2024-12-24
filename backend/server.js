@@ -3,14 +3,12 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const User = require('./models/User');
-const jwt = require('jsonwebtoken'); // Import the jwt library
+const jwt = require('jsonwebtoken'); 
 const adminRouter = require('./routes/admin');
 require('dotenv').config();
 
-// Inisialisasi Express
 const app = express();
 
-// Hubungkan ke Database
 connectDB();
 
 // Middleware
@@ -35,33 +33,30 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid password' });
     }
 
-    // Create JWT token with user data (e.g., user ID)
+    const role = email.includes('@admin.com') ? 'admin' : 'user';
+
     const token = jwt.sign(
-      { userId: user._id, email: user.email },
-      process.env.JWT_SECRET, // Secret key (store this securely in your .env)
-      { expiresIn: '1h' } // Token expiration (optional)
+      { userId: user._id, email: user.email, role: role },
+      process.env.JWT_SECRET, 
+      { expiresIn: '1h' } 
     );
 
-    // Determine the role
-    const role = email.includes('@admin.com') ? 'admin' : 'user';
     const redirectTo = role === 'admin' ? '/admin' : '/';
 
     return res.status(200).json({
       message: 'Login successful',
       role,
       redirectTo,
-      token, // Send the token in the response
+      token, 
     });
   } catch (err) {
     return res.status(500).json({ message: 'Internal server error', error: err.message });
   }
 });
 
-// Middleware Penanganan Rute Tidak Ditemukan
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-// Jalankan Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log('Server running on port ${PORT}'));

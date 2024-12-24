@@ -100,6 +100,9 @@ export default {
           password: this.password,
         });
 
+        localStorage.setItem("authToken", response.data.token);
+
+
         // Simpan data ke localStorage
         localStorage.setItem("user", JSON.stringify({
           email: this.email,

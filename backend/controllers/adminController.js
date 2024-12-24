@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const User = require('../models/User');
+const jwt = require('jsonwebtoken');
 const Crowdfund = require('../models/Crowdfund');
 const Comment = require('../models/Comment');
 

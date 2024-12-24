@@ -19,7 +19,7 @@ exports.login = async (req, res) => {
 
         // Buat token JWT
         const token = jwt.sign(
-            { id: user._id, role: user.email.includes('@admin.com') ? 'ADMIN' : 'USER' },
+            { id: user._id, role: user.email.includes('@admin.com') ? 'admin' : 'user' },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
@@ -27,5 +27,14 @@ exports.login = async (req, res) => {
         res.json({ message: 'Login successful', token });
     } catch (error) {
         res.status(500).json({ message: 'Error logging in', error: error.message });
+    }
+};
+
+exports.getUsers = async (req, res) => {
+    try {
+        const users = await User.find();
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching users', error: error.message });
     }
 };

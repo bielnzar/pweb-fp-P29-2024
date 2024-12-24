@@ -148,15 +148,35 @@ export default {
   methods: {
     async fetchCrowdfunds() {
       try {
-        const response = await axios.get("http://localhost:5000/api/admin");
+        // Retrieve the token from localStorage
+        const token = localStorage.getItem("authToken");
+
+        // Make the API call with the Authorization header
+        const response = await axios.get("http://localhost:5000/api/admin", {
+          headers: {
+            Authorization: `Bearer ${token}`, // Add the token here
+          },
+        });
+
         console.log(response.data);
         this.crowdfunds = response.data;
       } catch (error) {
         console.error("Failed to fetch crowdfunds:", error);
+        if (error.response && error.response.status === 401) {
+          alert("Your session has expired. Please log in again.");
+          // Optionally redirect to login page
+          this.$router.push("/login");
+        }
       }
     },
+
     deleteCrowdfund(id) {
-      axios.delete(`http://localhost:5000/api/admin/${id}`).then(() => {
+      axios.delete(`http://localhost:5000/api/admin/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      })
+      .then(() => {
         this.fetchCrowdfunds();
       });
     },
