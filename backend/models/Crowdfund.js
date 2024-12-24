@@ -31,11 +31,11 @@ const CrowdfundSchema = new Schema(
     comments: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Comment', // Reference to the Comment model
+        ref: 'Comment', 
       },
     ],
   },
-  { timestamps: true } // Automatically add createdAt and updatedAt
+  { timestamps: true } 
 );
 
 module.exports = mongoose.model('Crowdfund', CrowdfundSchema);

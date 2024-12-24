@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-// Public Pages
+// Import halaman
 import LandingPage from '../views/LandingPage.vue';
 import NewsPage from '../views/NewsPage.vue';
 import LoginPage from '../views/LoginPage.vue';
@@ -11,23 +11,23 @@ import AdminCrowdfundDetail from '../views/admin/AdminCrowdfundDetail.vue';
 import AdminEditCrowdfund from '../views/admin/AdminEditCrowdfund.vue';
 import AdminCreateCrowdfund from '../views/admin/AdminCreateCrowdfund.vue';
 
-// Middleware for protecting admin routes
+// Middleware untuk proteksi rute admin
 const requireAdminAuth = (to, from, next) => {
-  const user = JSON.parse(localStorage.getItem('user')); // Assuming user info is stored in localStorage
-  if (user?.role === 'admin') {
+  const user = JSON.parse(localStorage.getItem('user')); 
+  if (user && user.role === 'admin') {
     next();
   } else {
-    next('/login'); // Redirect to login if not authorized
+    next('/login'); 
   }
 };
 
 const routes = [
-  // Public Routes
+  // Rute Publik
   { path: '/', name: 'Landing', component: LandingPage },
   { path: '/news', name: 'News', component: NewsPage },
   { path: '/login', name: 'Login', component: LoginPage },
 
-  // Admin Routes
+  // Rute Admin
   {
     path: '/admin',
     name: 'AdminDashboard',

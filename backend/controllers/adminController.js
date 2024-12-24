@@ -25,7 +25,7 @@ exports.getCrowdfundDetails = async (req, res) => {
   }
 
   try {
-    // Attempt to fetch the crowdfund and populate comments
+    // Fetch crowdfund details with populated comments
     const crowdfund = await Crowdfund.findById(id).populate('comments');
     console.log('Crowdfund fetched:', crowdfund); // Debug log
 
@@ -40,12 +40,25 @@ exports.getCrowdfundDetails = async (req, res) => {
   }
 };
 
-
 // 3. Create crowdfund
 exports.createCrowdfund = async (req, res) => {
   const { name, target, createdBy } = req.body;
+
+  // Periksa apakah semua data yang diperlukan ada
+  if (!name || !target || !createdBy) {
+    return res.status(400).json({ message: 'Missing required fields' });
+  }
+
   try {
-    const newCrowdfund = new Crowdfund({ name, target, createdBy });
+    const newCrowdfund = new Crowdfund({
+      name,
+      target,
+      createdBy,
+      currentDonation: 0, // Set default current donation to 0
+      status: 'OPEN', // Set default status to OPEN
+    });
+
+    // Simpan crowdfund ke database
     await newCrowdfund.save();
     res.status(201).json(newCrowdfund);
   } catch (err) {
@@ -66,7 +79,7 @@ exports.editCrowdfund = async (req, res) => {
     const updatedCrowdfund = await Crowdfund.findByIdAndUpdate(
       id,
       { name, target, status },
-      { new: true }
+      { new: true } // Mengambil data terbaru setelah update
     );
     if (!updatedCrowdfund) return res.status(404).json({ message: 'Crowdfund not found' });
     res.status(200).json(updatedCrowdfund);

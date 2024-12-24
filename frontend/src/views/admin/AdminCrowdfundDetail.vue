@@ -61,17 +61,29 @@ export default {
   },
   methods: {
     async fetchCrowdfund() {
-      const response = await axios.get(`/api/admin/${this.$route.params.crowdfund_id}`);
-      this.crowdfund = response.data;
-      this.comments = response.data.comments;
+      try {
+        const response = await axios.get(`http://localhost:5000/api/admin/${this.$route.params.crowdfund_id}`);
+        this.crowdfund = response.data;
+        this.comments = response.data.comments;
+      } catch (error) {
+        console.error("Error fetching crowdfund details:", error);
+      }
     },
     async deleteComment(id) {
-      await axios.delete(`/api/comments/${id}`);
-      this.fetchCrowdfund();
+      try {
+        await axios.delete(`http://localhost:5000/api/admin/comment/${id}`);
+        this.fetchCrowdfund();
+      } catch (error) {
+        console.error("Error deleting comment:", error);
+      }
     },
     async deleteCrowdfund() {
-      await axios.delete(`/api/admin/${this.$route.params.crowdfund_id}`);
-      this.$router.push("/admin");
+      try {
+        await axios.delete(`http://localhost:5000/api/admin/${this.$route.params.crowdfund_id}`);
+        this.$router.push("/admin");
+      } catch (error) {
+        console.error("Error deleting crowdfund:", error);
+      }
     },
   },
   created() {
@@ -79,6 +91,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .container {

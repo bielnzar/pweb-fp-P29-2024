@@ -48,13 +48,35 @@ export default {
       form: {
         name: "",
         target: 0,
+        status: "OPEN", // Status defaultnya adalah OPEN
+        currentDonation: 0, // Donasi yang terkumpul defaultnya adalah 0
+        comments: [], // Default array kosong untuk komentar
+        createdBy: "", // Akan diisi dengan data user
       },
+      user: JSON.parse(localStorage.getItem('user')) || {},  // Ambil data user dari localStorage
     };
   },
   methods: {
     async submitCreate() {
       try {
-        await axios.post("/api/admin/create", this.form);
+        const createdBy = this.user.name; // Ambil nama pengguna dari data user
+        if (!createdBy) {
+          console.error("User data is not available.");
+          return;
+        }
+
+        // Mengisi field createdBy dengan nama pengguna
+        this.form.createdBy = createdBy;
+
+        // Data yang dikirimkan ke server
+        const crowdfundData = { 
+          ...this.form, 
+          createdAt: new Date().toISOString(),  // Menambahkan tanggal pembuatan (current timestamp)
+          updatedAt: new Date().toISOString()   // Menambahkan tanggal update (current timestamp)
+        };
+
+        // Kirim data ke server
+        await axios.post("/api/admin/create", crowdfundData);
         this.$router.push("/admin");
       } catch (error) {
         console.error("Error creating crowdfund:", error);

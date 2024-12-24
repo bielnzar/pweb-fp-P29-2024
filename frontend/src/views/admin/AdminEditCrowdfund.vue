@@ -64,12 +64,20 @@ export default {
   },
   methods: {
     async fetchCrowdfund() {
-      const response = await axios.get(`/api/admin/${this.$route.params.crowdfund_id}`);
-      this.form = { ...response.data };
+      try {
+        const response = await axios.get(`http://localhost:5000/api/admin/${this.$route.params.crowdfund_id}`);
+        this.form = response.data;
+      } catch (error) {
+        console.error("Error fetching crowdfund details:", error);
+      }
     },
     async submitEdit() {
-      await axios.put(`/api/admin/${this.$route.params.crowdfund_id}/edit`, this.form);
-      this.$router.push(`/admin/${this.$route.params.crowdfund_id}`);
+      try {
+        await axios.put(`http://localhost:5000/api/admin/${this.$route.params.crowdfund_id}`, this.form);
+        this.$router.push(`/admin/${this.$route.params.crowdfund_id}`);
+      } catch (error) {
+        console.error("Error editing crowdfund:", error);
+      }
     },
   },
   created() {
