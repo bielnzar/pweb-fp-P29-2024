@@ -26,16 +26,16 @@ const CrowdfundSchema = new Schema(
     },
     createdBy: {
       type: String,
-      required: [true, 'Creator name is required'],
+      required: [true, 'Creator email is required'],
     },
     comments: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Comment', 
+        ref: 'Comment',
       },
     ],
   },
-  { timestamps: true } 
+  { timestamps: true } // Automatically adds createdAt and updatedAt
 );
 
 module.exports = mongoose.model('Crowdfund', CrowdfundSchema);

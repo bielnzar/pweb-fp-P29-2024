@@ -37,7 +37,7 @@ const routes = [
   {
     path: '/admin/:crowdfund_id',
     name: 'AdminCrowdfundDetail',
-    component: AdminCrowdfundDetail,
+    component:  () => import('@/views/admin/AdminCrowdfundDetail.vue'),
     beforeEnter: requireAdminAuth,
   },
   {

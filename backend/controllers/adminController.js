@@ -35,7 +35,7 @@ exports.getCrowdfundDetails = async (req, res) => {
       return res.status(404).json({ message: 'Crowdfund not found' });
     }
 
-    res.status(200).json(crowdfund);
+    res.status(200).json(crowdfund); // Return crowdfund details
   } catch (err) {
     console.error('Error fetching crowdfund details:', err); // Debug log
     res.status(500).json({ message: 'Error fetching crowdfund details', error: err.message });
@@ -44,11 +44,12 @@ exports.getCrowdfundDetails = async (req, res) => {
 
 // 3. Create crowdfund
 exports.createCrowdfund = async (req, res) => {
-  const { name, target, createdBy } = req.body;
+  console.log("Request body:", req.body);
+  const { name, target } = req.body;
+  const createdBy = req.user.email; 
 
-  // Periksa apakah semua data yang diperlukan ada
   if (!name || !target || !createdBy) {
-    return res.status(400).json({ message: 'Missing required fields' });
+    return res.status(400).json({ message: "Missing required fields" });
   }
 
   try {
@@ -56,15 +57,14 @@ exports.createCrowdfund = async (req, res) => {
       name,
       target,
       createdBy,
-      currentDonation: 0, // Set default current donation to 0
-      status: 'OPEN', // Set default status to OPEN
+      currentDonation: 0,
+      status: "OPEN",
     });
-
-    // Simpan crowdfund ke database
     await newCrowdfund.save();
     res.status(201).json(newCrowdfund);
   } catch (err) {
-    res.status(500).json({ message: 'Error creating crowdfund', error: err.message });
+    console.error("Error creating crowdfund:", err);
+    res.status(500).json({ message: "Error creating crowdfund", error: err.message });
   }
 };
 

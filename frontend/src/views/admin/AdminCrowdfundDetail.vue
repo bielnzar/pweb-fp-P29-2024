@@ -12,7 +12,7 @@
         <h3 class="text-lg font-bold mt-6">Comments</h3>
         <ul>
           <li
-            v-for="comment in comments"
+            v-for="comment in crowdfund.comments"
             :key="comment._id"
             class="bg-gray-100 p-4 rounded-lg my-2 flex justify-between items-center"
           >
@@ -56,23 +56,31 @@ export default {
   data() {
     return {
       crowdfund: {},
-      comments: [],
     };
   },
   methods: {
     async fetchCrowdfund() {
       try {
-        const response = await axios.get(`http://localhost:5000/api/admin/${this.$route.params.crowdfund_id}`);
-        this.crowdfund = response.data;
-        this.comments = response.data.comments;
-      } catch (error) {
-        console.error("Error fetching crowdfund details:", error);
+        const token = localStorage.getItem("authToken");
+        const response = await axios.get("http://localhost:5000/api/admin", {
+      headers: {
+        Authorization: `Bearer ${token}`, 
+      },
+    });
+    console.log(response.data); 
+    this.crowdfunds = response.data;
+    } catch (error) {
+    console.error("Failed to fetch crowdfunds:", error);
+    if (error.response && error.response.status === 401) {
+      alert("Your session has expired. Please log in again.");
+      this.$router.push("/login");
+        }
       }
     },
     async deleteComment(id) {
       try {
         await axios.delete(`http://localhost:5000/api/admin/comment/${id}`);
-        this.fetchCrowdfund();
+        this.fetchCrowdfund(); 
       } catch (error) {
         console.error("Error deleting comment:", error);
       }
@@ -80,7 +88,7 @@ export default {
     async deleteCrowdfund() {
       try {
         await axios.delete(`http://localhost:5000/api/admin/${this.$route.params.crowdfund_id}`);
-        this.$router.push("/admin");
+        this.$router.push("/admin"); 
       } catch (error) {
         console.error("Error deleting crowdfund:", error);
       }
@@ -91,10 +99,3 @@ export default {
   },
 };
 </script>
-
-
-<style scoped>
-.container {
-  max-width: 800px;
-}
-</style>

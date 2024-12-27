@@ -23,6 +23,9 @@
             required
           />
 
+          <p v-if="errorMessage" class="text-red-500 mb-4">{{ errorMessage }}</p>
+          <p v-if="successMessage" class="text-green-500 mb-4">{{ successMessage }}</p>
+
           <button
             type="submit"
             class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-300"
@@ -41,6 +44,8 @@ import Navbar from "/src/components/AdminNavbar.vue";
 import Footer from "/src/components/Footer.vue";
 import axios from "axios";
 
+axios.defaults.baseURL = "http://localhost:5000";
+
 export default {
   components: { Navbar, Footer },
   data() {
@@ -48,40 +53,41 @@ export default {
       form: {
         name: "",
         target: 0,
-        status: "OPEN", // Status defaultnya adalah OPEN
-        currentDonation: 0, // Donasi yang terkumpul defaultnya adalah 0
-        comments: [], // Default array kosong untuk komentar
-        createdBy: "", // Akan diisi dengan data user
       },
-      user: JSON.parse(localStorage.getItem('user')) || {},  // Ambil data user dari localStorage
+      user: JSON.parse(localStorage.getItem("user")) || {}, 
+      errorMessage: "", 
+      successMessage: "",
     };
   },
   methods: {
     async submitCreate() {
-      try {
-        const createdBy = this.user.name; // Ambil nama pengguna dari data user
-        if (!createdBy) {
-          console.error("User data is not available.");
-          return;
-        }
+  try {
+    const token = localStorage.getItem("authToken"); // Mengambil token dengan nama 'authToken'
+    if (!token) {
+      this.errorMessage = "Token JWT tidak ditemukan. Silakan login ulang.";
+      return;
+    }
 
-        // Mengisi field createdBy dengan nama pengguna
-        this.form.createdBy = createdBy;
+    const crowdfundData = {
+      name: this.form.name,
+      target: this.form.target,
+      createdBy: this.user.email,
+    };
 
-        // Data yang dikirimkan ke server
-        const crowdfundData = { 
-          ...this.form, 
-          createdAt: new Date().toISOString(),  // Menambahkan tanggal pembuatan (current timestamp)
-          updatedAt: new Date().toISOString()   // Menambahkan tanggal update (current timestamp)
-        };
+    const response = await axios.post("http://localhost:5000/api/admin/create", crowdfundData, {
+      headers: {
+        Authorization: `Bearer ${token}`, 
+      },
+    });
 
-        // Kirim data ke server
-        await axios.post("/api/admin/create", crowdfundData);
-        this.$router.push("/admin");
-      } catch (error) {
-        console.error("Error creating crowdfund:", error);
-      }
-    },
+    this.successMessage = "Crowdfund berhasil dibuat!";
+    this.form.name = "";
+    this.form.target = 0;
+  } catch (error) {
+    this.errorMessage = error.response?.data?.message || "Gagal membuat crowdfund.";
+    console.error("Error:", error);
+  }
+  },
   },
 };
 </script>
